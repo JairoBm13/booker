@@ -15,6 +15,10 @@ export class MapComponent implements OnInit {
   latitude: any;
   longitude: any;
 
+  startPos: any;
+  nudge = document.getElementById('nudge');
+  nudgeTimeoutId = setTimeout(this.showNudgeBanner, 5000);
+
   constructor() { }
 
   ngOnInit() {
@@ -24,6 +28,17 @@ export class MapComponent implements OnInit {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+    // check for Geolocation support
+    if (navigator.geolocation) {
+      console.log('Geolocation is supported!');
+      let watchId = navigator.geolocation.watchPosition(function(position) { 
+        this.latitude =  position.coords.latitude;
+        this.longitude = position.coords.longitude;
+      });
+    } else {
+      console.log('Geolocation is not supported for this Browser/OS.');
+    }
+
   }
 
   setMapType(mapTypeId: string) {
@@ -54,5 +69,33 @@ export class MapComponent implements OnInit {
 
   markerHandler(marker: google.maps.Marker) {
     alert('Marker\'s Title: ' + marker.getTitle());
+  }
+
+  showNudgeBanner() {
+    this.nudge.style.display = 'block';
+  }
+
+  hideNudgeBanner() {
+    this.nudge.style.display = 'none';
+  }
+
+  geoSuccess(position) {
+    this.hideNudgeBanner();
+    // We have the location, don't display banner
+    clearTimeout(this.nudgeTimeoutId);
+
+    // Do magic with location
+    this.startPos = position;
+    document.getElementById('startLat').innerHTML = this.startPos.coords.latitude;
+    document.getElementById('startLon').innerHTML = this.startPos.coords.longitude;
+  }
+
+  geoError(error) {
+    switch (error.code) {
+      case error.TIMEOUT:
+        // The user didn't accept the callout
+        this.showNudgeBanner();
+        break;
+    }
   }
 }
