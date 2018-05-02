@@ -1,7 +1,7 @@
 {
-  "name": "Progressive Web Cat",
-  "short_name": "PWCat",
-  "description": "A funny cat image generator",  
+  "name": "Booker - Search Books, Find Books",
+  "short_name": "Booker",
+  "description": "Find books hidden in your city",  
   "icons": [{
     "src": "assets/icon-128x128.png",
       "sizes": "128x128",
